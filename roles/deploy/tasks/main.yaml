@@ -1,0 +1,27 @@
+- name: create build directory
+  file:
+   path: /root/demo
+   state: directory
+   owner: root
+   group: root
+   mode: '0755'
+- name: clone git
+  git:
+    repo: git://github.com/Mateorus/soramitsu_test
+    dest: /root/demo
+    version: master
+- name: build container image
+  docker_image:
+   name: soramitsu
+   build:
+    path: /root/demo
+   source: build
+   state: present
+- name: Running the container
+  docker_container:
+   name: demo
+   image: soramitsu:latest
+   state: started
+   ports: 80:80
+- name: Check
+  shell: docker ps
